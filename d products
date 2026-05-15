@@ -1,0 +1,29 @@
+                                Table "public.products"
+   Column    |            Type             | Collation | Nullable |      Default       
+-------------+-----------------------------+-----------+----------+--------------------
+ id          | uuid                        |           | not null | uuid_generate_v4()
+ seller_id   | uuid                        |           |          | 
+ category_id | uuid                        |           |          | 
+ name        | text                        |           | not null | 
+ slug        | text                        |           |          | 
+ description | text                        |           |          | 
+ type        | text                        |           |          | 
+ base_price  | bigint                      |           |          | 
+ is_active   | boolean                     |           |          | true
+ created_at  | timestamp without time zone |           |          | now()
+Indexes:
+    "products_pkey" PRIMARY KEY, btree (id)
+    "idx_products_seller" btree (seller_id)
+    "products_slug_key" UNIQUE CONSTRAINT, btree (slug)
+Check constraints:
+    "products_type_check" CHECK (type = ANY (ARRAY['account'::text, 'file'::text, 'license'::text]))
+Foreign-key constraints:
+    "products_category_id_fkey" FOREIGN KEY (category_id) REFERENCES categories(id)
+    "products_seller_id_fkey" FOREIGN KEY (seller_id) REFERENCES users(id)
+Referenced by:
+    TABLE "cart_items" CONSTRAINT "cart_items_product_id_fkey" FOREIGN KEY (product_id) REFERENCES products(id)
+    TABLE "order_items" CONSTRAINT "order_items_product_id_fkey" FOREIGN KEY (product_id) REFERENCES products(id)
+    TABLE "product_stocks" CONSTRAINT "product_stocks_product_id_fkey" FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    TABLE "product_variants" CONSTRAINT "product_variants_product_id_fkey" FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    TABLE "reviews" CONSTRAINT "reviews_product_id_fkey" FOREIGN KEY (product_id) REFERENCES products(id)
+

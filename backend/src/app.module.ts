@@ -1,0 +1,67 @@
+import { Module } from '@nestjs/common';
+import { ProductImagesModule } from './product-images/product-images.module';
+import { UploadModule } from './upload/upload.module';
+
+import { TypeOrmModule }
+  from '@nestjs/typeorm';
+
+import { JwtModule }
+  from '@nestjs/jwt';
+
+import { UsersModule }
+  from './users/users.module';
+
+import { AuthModule }
+  from './auth/auth.module';
+
+import { ProductsModule }
+  from './products/products.module';
+
+import { CartModule }
+  from './cart/cart.module';
+
+import { OrdersModule }
+  from './orders/orders.module';
+import { R2Service } from './common/r2.service';
+import { ConfigModule } from '@nestjs/config';
+
+@Module({
+  imports: [
+
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+
+    JwtModule.register({
+  secret: process.env.JWT_SECRET || 'supersecretkey',
+  signOptions: {
+    expiresIn:
+      (process.env.JWT_EXPIRES_IN || '1d') as any,
+  },
+}),
+
+    AuthModule,
+    UsersModule,
+    ProductsModule,
+    CartModule,
+    OrdersModule,
+    ProductImagesModule,
+    UploadModule,
+  ],
+
+  providers: [
+    R2Service,
+  ],
+})
+export class AppModule { }

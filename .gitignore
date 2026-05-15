@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# Build output
+dist/
+build/
+.next/
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Uploads and temp
+uploads/
+tmp/
+temp/
