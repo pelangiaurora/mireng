@@ -26,7 +26,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium">
           <Link href="/" className="text-gray-600 hover:text-black transition-colors">Produk</Link>
-          {(user?.role === 'admin' || user?.role === 'seller') && (
+          {(user?.role === 'admin' || user?.role === 'seller' || user?.role === 'buyer') && (
             <Link href="/dashboard" className="text-gray-600 hover:text-black transition-colors">Dashboard Seller</Link>
           )}
         </div>
