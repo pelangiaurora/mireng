@@ -11,6 +11,7 @@ import { ProductImagesModule } from './product-images/product-images.module';
 import { UploadModule } from './upload/upload.module';
 import { StoresModule } from './stores/stores.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AddressesModule } from './addresses/addresses.module';
 import { R2Service } from './common/r2.service';
 
 @Module({
@@ -39,6 +40,7 @@ import { R2Service } from './common/r2.service';
     UploadModule,
     StoresModule,
     CategoriesModule,
+    AddressesModule,
   ],
   providers: [R2Service],
 })
