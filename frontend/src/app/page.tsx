@@ -11,7 +11,10 @@ export default function HomePage() {
 
   useEffect(() => {
     api.get('/products')
-      .then((res) => setProducts(res.data.data ?? res.data))
+      .then((res) => {
+        const result = res.data.data ?? res.data;
+        setProducts(Array.isArray(result) ? result : result.data ?? []);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -25,7 +28,7 @@ export default function HomePage() {
       {/* Hero */}
       <div className="rounded-2xl bg-black px-8 py-12 text-center text-white">
         <h1 className="text-3xl font-bold mb-2">Mireng Marketplace</h1>
-        <p className="text-gray-400 mb-6">Temukan akun, file, dan lisensi digital terpercaya</p>
+        <p className="text-gray-400 mb-6">Temukan produk fisik & digital terpercaya</p>
         <div className="relative mx-auto max-w-md">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input

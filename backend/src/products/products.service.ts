@@ -89,7 +89,7 @@ export class ProductsService {
       .leftJoinAndSelect('product.store', 'store')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.images', 'images')
-      .where('product.is_active = true');
+      .where('product.isActive = true');
 
     if (search) {
       qb.andWhere('LOWER(product.name) LIKE LOWER(:search)', {
