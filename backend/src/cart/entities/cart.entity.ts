@@ -4,22 +4,23 @@ import {
   ManyToOne,
   OneToMany,
   CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
-
 import { User } from '../../users/entities/user.entity';
 import { CartItem } from './cart-item.entity';
 
 @Entity('carts')
 export class Cart {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User)
-  user: User;
+  @JoinColumn({ name: 'userId' })
+  user!: User;
 
   @OneToMany(() => CartItem, (item) => item.cart)
-  items: CartItem[];
+  items!: CartItem[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

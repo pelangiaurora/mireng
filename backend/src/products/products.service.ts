@@ -91,43 +91,53 @@ export class ProductsService {
       .leftJoinAndSelect('product.images', 'images')
       .where('product.isActive = true');
 
+    const qbAny = qb as any;
+
     if (search) {
-      qb.andWhere('LOWER(product.name) LIKE LOWER(:search)', {
+      qbAny.andWhere('LOWER(product.name) LIKE LOWER(:search)', {
         search: `%${search}%`,
       });
     }
     if (type) {
-      qb.andWhere('product.type = :type', { type });
+      qbAny.andWhere('product.type = :type', { type });
     }
     if (categoryId) {
-      qb.andWhere('product.category_id = :categoryId', { categoryId });
+      qbAny.andWhere('product.categoryId = :categoryId', { categoryId });
     }
     if (storeId) {
-      qb.andWhere('product.store_id = :storeId', { storeId });
+      qbAny.andWhere('product.storeId = :storeId', { storeId });
     }
     if (condition) {
-      qb.andWhere('product.condition = :condition', { condition });
+      qbAny.andWhere('product.condition = :condition', { condition });
     }
     if (minPrice > 0) {
-      qb.andWhere('product.price >= :minPrice', { minPrice });
+      qbAny.andWhere('product.price >= :minPrice', { minPrice });
     }
     if (maxPrice < 999999999) {
-      qb.andWhere('product.price <= :maxPrice', { maxPrice });
+      qbAny.andWhere('product.price <= :maxPrice', { maxPrice });
     }
 
     const validSorts = ['createdAt', 'price', 'rating', 'totalSold'];
     const sort = validSorts.includes(sortBy) ? sortBy : 'createdAt';
-    qb.orderBy(`product.${sort}`, sortOrder);
 
-    const [products, total] = await qb
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getManyAndCount();
+    qbAny.orderBy(`product.${sort}`, sortOrder as any);
 
-    return {
-      data: products.map((p) => this.formatProduct(p)),
-      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
-    };
+    try {
+      const [products, total] = await qb
+        .skip((page - 1) * limit)
+        .take(limit)
+        .getManyAndCount();
+
+      return {
+        data: products.map((p) => this.formatProduct(p)),
+        meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+      };
+    } catch (err: any) {
+      // Preserve behavior (still failing) but expose the underlying DB/query error message
+      throw new BadRequestException(
+        err?.message || 'Failed to fetch products',
+      );
+    }
   }
 
   // ── Find produk by toko ───────────────────────────────

@@ -35,6 +35,7 @@ export class HttpExceptionFilter
         : 'Internal server error';
 
     let message = 'Internal server error';
+    console.error('🔥 ERROR DETAIL:', exception);
 
     if (
       typeof exceptionResponse === 'string'

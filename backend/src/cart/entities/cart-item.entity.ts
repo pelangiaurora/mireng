@@ -4,25 +4,27 @@ import {
   ManyToOne,
   Column,
   CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
-
 import { Cart } from './cart.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity('cart_items')
 export class CartItem {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => Cart, (cart) => cart.items)
-  cart: Cart;
+  @JoinColumn({ name: 'cartId' })
+  cart!: Cart;
 
   @ManyToOne(() => Product)
-  product: Product;
+  @JoinColumn({ name: 'productId' })
+  product!: Product;
 
-  @Column()
-  quantity: number;
+  @Column({ default: 1 })
+  quantity!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

@@ -26,6 +26,7 @@ import { R2Service } from './common/r2.service';
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: false, // Pakai migration manual, jangan auto-sync
+      logging: ['error', 'warn'],
     }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'supersecretkey',

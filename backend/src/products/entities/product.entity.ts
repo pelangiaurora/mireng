@@ -16,112 +16,113 @@ import { ProductImage } from '../../product-images/entities/product-image.entity
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true, unique: true })
-  slug: string;
+  slug!: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description!: string;
 
   @Column({
+    name: 'base_price',
     type: 'decimal',
     precision: 12,
     scale: 2,
     nullable: true,
     transformer: { to: (v: number) => v, from: (v: string) => Number(v) },
   })
-  price: number;
+  price!: number;
 
   // Tipe: physical = produk fisik, digital = produk digital (file/akun/lisensi), service = jasa
   @Column({ default: 'physical' })
-  type: string;
+  type!: string;
 
   // Kondisi produk (khusus fisik)
   @Column({ default: 'new' })
-  condition: string;
+  condition!: string;
 
   // Berat dalam gram (khusus fisik, untuk kalkulasi ongkir)
   @Column({ default: 0 })
-  weight: number;
+  weight!: number;
 
   @Column({ default: 0 })
-  width: number;
+  width!: number;
 
   @Column({ default: 0 })
-  height: number;
+  height!: number;
 
   @Column({ default: 0 })
-  length: number;
+  length!: number;
 
   @Column({ nullable: true })
-  sku: string;
+  sku!: string;
 
   @Column({ default: 0 })
-  stock: number;
+  stock!: number;
 
   @Column({ name: 'min_order', default: 1 })
-  minOrder: number;
+  minOrder!: number;
 
   // Untuk produk digital
   @Column({ name: 'is_digital', default: false })
-  isDigital: boolean;
+  isDigital!: boolean;
 
   @Column({ name: 'digital_file', nullable: true })
-  digitalFile: string;
+  digitalFile!: string;
 
   @Column({ name: 'digital_note', nullable: true, type: 'text' })
-  digitalNote: string;
+  digitalNote!: string;
 
   @Column({ name: 'is_active', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ name: 'total_sold', default: 0 })
-  totalSold: number;
+  totalSold!: number;
 
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 0 })
-  rating: number;
+  rating!: number;
 
   @Column({ name: 'total_reviews', default: 0 })
-  totalReviews: number;
+  totalReviews!: number;
 
   // Relasi ke Toko
   @ManyToOne(() => Store, { nullable: true })
   @JoinColumn({ name: 'store_id' })
-  store: Store;
+  store!: Store;
 
   @Column({ name: 'store_id', nullable: true })
-  storeId: string;
+  storeId!: string;
 
   // Relasi ke Seller (user)
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'seller_id' })
-  seller: User;
+  seller!: User;
 
   @Column({ name: 'seller_id', nullable: true })
-  sellerId: string;
+  sellerId!: string;
 
   // Relasi ke Kategori
   @ManyToOne(() => Category, { nullable: true })
   @JoinColumn({ name: 'category_id' })
-  category: Category;
+  category!: Category;
 
   @Column({ name: 'category_id', nullable: true })
-  categoryId: string;
+  categoryId!: string;
 
   // Gambar produk
   @OneToMany(() => ProductImage, (img) => img.product, { cascade: true })
-  images: ProductImage[];
+  images!: ProductImage[];
 
-  @Column({ nullable: true })
-  imageUrl: string;
+  @Column({ nullable: true, select: false })
+  imageUrl!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
