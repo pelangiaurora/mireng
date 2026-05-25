@@ -16,11 +16,10 @@ function StepIndicator({ step, total }: { step: number; total: number }) {
     <div className="flex items-center justify-center gap-2 mb-8">
       {Array.from({ length: total }).map((_, i) => (
         <div key={i} className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-            i + 1 < step ? 'bg-gray-900 text-white' :
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${i + 1 < step ? 'bg-gray-900 text-white' :
             i + 1 === step ? 'bg-gray-900 text-white ring-4 ring-gray-900/20' :
-            'bg-gray-100 text-gray-400'
-          }`}>
+              'bg-gray-100 text-gray-400'
+            }`}>
             {i + 1 < step ? <Check size={14} /> : i + 1}
           </div>
           {i < total - 1 && (
@@ -352,7 +351,7 @@ function StepSuccess({ storeName }: { storeName: string }) {
 
 /* ─── Main Page ─────────────────────────────── */
 export default function CreateStorePage() {
-  const { user, fetchProfile } = useAuthStore();
+  const { user, fetchProfile, initialized } = useAuthStore();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -367,6 +366,8 @@ export default function CreateStorePage() {
   const totalSteps = user?.role === 'seller' || user?.role === 'admin' ? 3 : 4;
 
   useEffect(() => {
+    // Tunggu sampai auth sudah initialized
+    if (!initialized) return; // tunggu auth selesai
     if (!user) { router.push('/login'); return; }
 
     // Cek apakah sudah punya toko
@@ -385,7 +386,8 @@ export default function CreateStorePage() {
         }
       })
       .finally(() => setCheckingStore(false));
-  }, [user]);
+  }, [user, initialized]);
+
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -402,12 +404,12 @@ export default function CreateStorePage() {
     }
   };
 
-  if (checkingStore) {
+  if (checkingStore || !initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-400">Memeriksa status toko...</p>
+          <p className="text-sm text-gray-400">Memuat...</p>
         </div>
       </div>
     );
