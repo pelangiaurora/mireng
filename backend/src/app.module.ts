@@ -15,6 +15,7 @@ import { AddressesModule } from './addresses/addresses.module';
 import { R2Service } from './common/r2.service';
 import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
 import { StoreVerificationsModule } from './store-verifications/store-verifications.module';
+import { SellerApplicationsModule } from './seller-applications/seller-applications.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { StoreVerificationsModule } from './store-verifications/store-verificati
     AddressesModule,
     PlatformSettingsModule,
     StoreVerificationsModule,
+    SellerApplicationsModule,
   ],
   providers: [R2Service],
 })
