@@ -4,8 +4,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
-  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
@@ -50,6 +48,28 @@ export class User {
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
+
+  // ─── FASE 1: Progressive KYC ──────────────────────────────────────
+  @Column({ name: 'kyc_verified', nullable: true, default: false })
+  kycVerified: boolean;
+
+  @Column({ name: 'kyc_verified_at', nullable: true, type: 'timestamp' })
+  kycVerifiedAt: Date;
+
+  @Column({ name: 'kyc_verified_by', nullable: true, type: 'uuid' })
+  kycVerifiedBy: string;
+
+  @Column({ name: 'withdraw_blocked', nullable: true, default: false })
+  withdrawBlocked: boolean;
+
+  @Column({
+    name: 'seller_reg_status',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+    default: 'none',
+  })
+  sellerRegStatus: string; // 'none' | 'pending' | 'approved' | 'rejected'
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

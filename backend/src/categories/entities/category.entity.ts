@@ -44,6 +44,15 @@ export class Category {
   @OneToMany(() => Category, (cat) => cat.parent)
   children: Category[];
 
+  // ─── FASE 1: Tipe Kategori ────────────────────────────────────────
+  @Column({
+    name: 'for_type',
+    type: 'varchar',
+    length: 20,
+    default: 'both',
+  })
+  forType: string; // 'physical' | 'digital' | 'both'
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
