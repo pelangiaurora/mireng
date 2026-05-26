@@ -8,8 +8,11 @@ export interface User {
   bio?: string;
   dateOfBirth?: string;
   gender?: string;
-  role: "buyer" | "seller" | "admin";
+  role: 'buyer' | 'seller' | 'admin';
   kycStatus?: string;
+  kycVerified?: boolean;
+  withdrawBlocked?: boolean;
+  sellerRegStatus?: 'none' | 'pending' | 'approved' | 'rejected';
   isActive?: boolean;
   createdAt?: string;
 }
