@@ -16,6 +16,7 @@ import { R2Service } from './common/r2.service';
 import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
 import { StoreVerificationsModule } from './store-verifications/store-verifications.module';
 import { SellerApplicationsModule } from './seller-applications/seller-applications.module';
+import { TierSystemModule } from './tier-system/tier-system.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SellerApplicationsModule } from './seller-applications/seller-applicati
     PlatformSettingsModule,
     StoreVerificationsModule,
     SellerApplicationsModule,
+    TierSystemModule,
   ],
   providers: [R2Service],
 })
