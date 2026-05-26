@@ -14,6 +14,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { R2Service } from './common/r2.service';
 import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
+import { StoreVerificationsModule } from './store-verifications/store-verifications.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PlatformSettingsModule } from './platform-settings/platform-settings.mo
     CategoriesModule,
     AddressesModule,
     PlatformSettingsModule,
+    StoreVerificationsModule,
   ],
   providers: [R2Service],
 })
