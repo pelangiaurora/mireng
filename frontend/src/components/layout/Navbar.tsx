@@ -14,14 +14,12 @@ import api from '@/lib/axios';
 function useCartCount() {
   const { user } = useAuthStore();
   const [count, setCount] = useState(0);
-
   useEffect(() => {
     if (!user) { setCount(0); return; }
     api.get('/cart')
       .then(res => setCount(res.data.data?.items?.length ?? 0))
       .catch(() => setCount(0));
   }, [user]);
-
   return count;
 }
 
@@ -34,7 +32,7 @@ function UserDropdown({ onClose }: { onClose: () => void }) {
     seller: { label: 'Seller', color: 'text-violet-600 bg-violet-50' },
     admin: { label: 'Admin', color: 'text-rose-600 bg-rose-50' },
     buyer: { label: 'Buyer', color: 'text-sky-600 bg-sky-50' },
-    customer: { label: 'Customer', color: 'text-sky-600 bg-sky-50' },
+    customer: { label: 'Buyer', color: 'text-sky-600 bg-sky-50' },
   };
 
   const role = roleConfig[user?.role ?? 'buyer'];
@@ -49,7 +47,7 @@ function UserDropdown({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
-      {/* User Info Header */}
+      {/* User Info */}
       <div className="px-4 py-4 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
@@ -67,45 +65,55 @@ function UserDropdown({ onClose }: { onClose: () => void }) {
 
       {/* Menu Items */}
       <div className="py-2">
+        {/* Semua role */}
         {[
           { icon: <User size={15} />, label: 'Profil Saya', href: '/profile' },
           { icon: <Package size={15} />, label: 'Riwayat Pesanan', href: '/orders' },
           { icon: <ShoppingCart size={15} />, label: 'Keranjang', href: '/cart' },
         ].map(item => (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onClose}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-          >
+          <Link key={item.href} href={item.href} onClick={onClose}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
             <span className="text-gray-400">{item.icon}</span>
             {item.label}
           </Link>
         ))}
 
-        {(user?.role === 'seller' || user?.role === 'admin') && (
+        {/* Seller */}
+        {user?.role === 'seller' && (
           <>
             <div className="mx-4 my-1.5 border-t border-gray-100" />
-            <Link
-              href="/dashboard/products"
-              onClick={onClose}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors font-medium"
-            >
-              <LayoutDashboard size={15} />
-              Dashboard Seller
+            <Link href="/dashboard" onClick={onClose}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors font-medium">
+              <LayoutDashboard size={15} /> Dashboard Seller
+            </Link>
+            <Link href="/dashboard/tier" onClick={onClose}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-50 transition-colors font-medium">
+              <Star size={15} /> Tier & Progress
+            </Link>
+          </>
+        )}
+
+        {/* Admin */}
+        {user?.role === 'admin' && (
+          <>
+            <div className="mx-4 my-1.5 border-t border-gray-100" />
+            <Link href="/dashboard" onClick={onClose}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors font-medium">
+              <LayoutDashboard size={15} /> Dashboard
+            </Link>
+            <Link href="/admin" onClick={onClose}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors font-medium">
+              <Shield size={15} /> Admin Panel
             </Link>
           </>
         )}
       </div>
 
       {/* Logout */}
-      <div className="border-t border-gray-100 p-2">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-        >
-          <LogOut size={15} />
-          Keluar dari Akun
+      <div className="border-t border-gray-100 p2">
+        <button onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+          <LogOut size={15} /> Keluar dari Akun
         </button>
       </div>
     </div>
@@ -125,14 +133,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Scroll shadow
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -143,7 +149,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Close mobile on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -154,16 +159,52 @@ export default function Navbar() {
   const initial = (user?.email ?? '').charAt(0).toUpperCase();
   const displayName = user?.email?.split('@')[0] ?? '';
 
+  // Bottom nav items berdasarkan role
+  const bottomNavItems = [
+    { label: 'Semua Produk', href: '/' },
+    { label: 'Akun Premium', href: '/?type=account' },
+    { label: 'File Digital', href: '/?type=file' },
+    { label: 'Lisensi', href: '/?type=license' },
+    ...(user?.role === 'seller' ? [
+      { label: '⚡ Dashboard', href: '/dashboard' },
+      { label: '⭐ Tier Saya', href: '/dashboard/tier' },
+    ] : []),
+    ...(user?.role === 'admin' ? [
+      { label: '⚡ Dashboard', href: '/dashboard' },
+      { label: '🛡️ Admin Panel', href: '/admin' },
+    ] : []),
+  ];
+
+  // Mobile nav items berdasarkan role
+  const mobileNavItems = [
+    { icon: <User size={16} />, label: 'Profil', href: '/profile' },
+    { icon: <ShoppingCart size={16} />, label: `Keranjang${cartCount > 0 ? ` (${cartCount})` : ''}`, href: '/cart' },
+    { icon: <Package size={16} />, label: 'Pesanan', href: '/orders' },
+    ...(user?.role === 'seller' || user?.role === 'admin' ? [
+      { icon: <LayoutDashboard size={16} />, label: 'Dashboard', href: '/dashboard' },
+    ] : []),
+    ...(user?.role === 'seller' ? [
+      { icon: <Star size={16} />, label: 'Tier & Progress', href: '/dashboard/tier' },
+    ] : []),
+    ...(user?.role === 'admin' ? [
+      { icon: <Shield size={16} />, label: 'Admin Panel', href: '/admin' },
+    ] : []),
+  ];
+
   return (
     <>
-      {/* ── Announcement Bar ── */}
+      {/* Announcement Bar */}
       <div className="bg-gray-900 text-white text-xs py-2 px-4 text-center flex items-center justify-center gap-2">
         <Zap size={11} className="text-yellow-400 flex-shrink-0" />
-        <span className="text-gray-300">Selamat datang di <span className="text-white font-semibold">Mireng Marketplace</span> — Jual beli produk digital terpercaya</span>
+        <span className="text-gray-300">
+          Selamat datang di{' '}
+          <span className="text-white font-semibold">Mireng Marketplace</span>
+          {' '}— Jual beli produk digital terpercaya
+        </span>
         <Shield size={11} className="text-emerald-400 flex-shrink-0" />
       </div>
 
-      {/* ── Main Navbar ── */}
+      {/* Main Navbar */}
       <nav className={`sticky top-0 z-40 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'border-b border-gray-100'}`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 h-16">
@@ -176,7 +217,7 @@ export default function Navbar() {
               <span className="hidden sm:inline">Mireng</span>
             </Link>
 
-            {/* Search Bar */}
+            {/* Search */}
             <form onSubmit={handleSearch} className="flex-1 max-w-xl">
               <div className="relative group">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors" />
@@ -188,11 +229,8 @@ export default function Navbar() {
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 focus:bg-white focus:ring-2 focus:ring-gray-900/5 transition-all"
                 />
                 {search && (
-                  <button
-                    type="button"
-                    onClick={() => setSearch('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-600 transition-colors"
-                  >
+                  <button type="button" onClick={() => setSearch('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-600 transition-colors">
                     <X size={14} />
                   </button>
                 )}
@@ -204,11 +242,7 @@ export default function Navbar() {
               {user ? (
                 <>
                   {/* Cart */}
-                  <Link
-                    href="/cart"
-                    className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors group"
-                    title="Keranjang"
-                  >
+                  <Link href="/cart" className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors group" title="Keranjang">
                     <ShoppingCart size={20} className="text-gray-600 group-hover:text-gray-900 transition-colors" />
                     {cartCount > 0 && (
                       <span className="absolute top-1 right-1 w-4 h-4 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
@@ -217,17 +251,16 @@ export default function Navbar() {
                     )}
                   </Link>
 
-                  {/* Notification (placeholder) */}
+                  {/* Notification */}
                   <button className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors group hidden md:flex">
                     <Bell size={20} className="text-gray-600 group-hover:text-gray-900 transition-colors" />
                   </button>
 
-                  {/* User Menu */}
+                  {/* User Dropdown */}
                   <div className="relative ml-1" ref={dropdownRef}>
                     <button
                       onClick={() => setShowDropdown(v => !v)}
-                      className={`flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl transition-all ${showDropdown ? 'bg-gray-100' : 'hover:bg-gray-50'
-                        }`}
+                      className={`flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl transition-all ${showDropdown ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                     >
                       <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-white text-xs font-bold">
                         {initial}
@@ -237,63 +270,45 @@ export default function Navbar() {
                       </span>
                       <ChevronDown size={14} className={`text-gray-400 transition-transform hidden md:block ${showDropdown ? 'rotate-180' : ''}`} />
                     </button>
-
                     {showDropdown && <UserDropdown onClose={() => setShowDropdown(false)} />}
                   </div>
                 </>
               ) : (
                 <>
-                  <Link
-                    href="/login"
-                    className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-colors hidden sm:block"
-                  >
+                  <Link href="/login"
+                    className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-colors hidden sm:block">
                     Masuk
                   </Link>
-                  <Link
-                    href="/register"
-                    className="px-4 py-2 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-700 rounded-xl transition-colors"
-                  >
+                  <Link href="/register"
+                    className="px-4 py-2 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-700 rounded-xl transition-colors">
                     Daftar
                   </Link>
                 </>
               )}
 
-              {/* Mobile Menu Toggle */}
-              <button
-                onClick={() => setMobileOpen(v => !v)}
-                className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors ml-1 md:hidden"
-              >
+              {/* Mobile Toggle */}
+              <button onClick={() => setMobileOpen(v => !v)}
+                className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors ml-1 md:hidden">
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
 
-          {/* ── Bottom Nav (Desktop) ── */}
+          {/* Bottom Nav Desktop */}
           <div className="hidden md:flex items-center gap-1 pb-2 overflow-x-auto">
-            {[
-              { label: 'Semua Produk', href: '/' },
-              { label: 'Akun Premium', href: '/?type=account' },
-              { label: 'File Digital', href: '/?type=file' },
-              { label: 'Lisensi', href: '/?type=license' },
-              ...(user?.role === 'seller' || user?.role === 'admin'
-                ? [{ label: '⚡ Dashboard Seller', href: '/dashboard/products' }]
-                : []),
-            ].map(item => (
-              <Link
-                key={item.href + item.label}
-                href={item.href}
+            {bottomNavItems.map(item => (
+              <Link key={item.href + item.label} href={item.href}
                 className={`flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${pathname === item.href && !item.href.includes('?')
                     ? 'bg-gray-900 text-white'
                     : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-              >
+                  }`}>
                 {item.label}
               </Link>
             ))}
           </div>
         </div>
 
-        {/* ── Mobile Menu ── */}
+        {/* Mobile Menu */}
         {mobileOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white">
             <div className="px-4 py-3 space-y-1">
@@ -308,19 +323,9 @@ export default function Navbar() {
                       <p className="text-xs text-gray-400">{user.email}</p>
                     </div>
                   </div>
-                  {[
-                    { icon: <User size={16} />, label: 'Profil', href: '/profile' },
-                    { icon: <ShoppingCart size={16} />, label: `Keranjang${cartCount > 0 ? ` (${cartCount})` : ''}`, href: '/cart' },
-                    { icon: <Package size={16} />, label: 'Pesanan', href: '/orders' },
-                    ...(user.role === 'seller' || user.role === 'admin'
-                      ? [{ icon: <LayoutDashboard size={16} />, label: 'Dashboard Seller', href: '/dashboard/products' }]
-                      : []),
-                  ].map(item => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="flex items-center gap-3 p-3 rounded-xl text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                    >
+                  {mobileNavItems.map(item => (
+                    <Link key={item.href} href={item.href}
+                      className="flex items-center gap-3 p-3 rounded-xl text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                       <span className="text-gray-400">{item.icon}</span>
                       {item.label}
                     </Link>
