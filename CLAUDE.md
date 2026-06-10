@@ -284,3 +284,40 @@ DEVELOPMENT_RULES.md             → aturan development
 FEATURE_STATUS.md                → status implementasi per fitur
 ROADMAP.md                       → roadmap detail per fase
 ```
+
+---
+
+## 🧠 ECC Skills & Rules
+
+> Dibaca Claude saat mengerjakan modul terkait. Skills ada di `.claude/skills/ecc/`.
+
+### Backend
+- `nestjs-patterns`     → NestJS module / service / controller
+- `postgres-patterns`   → TypeORM entity / query
+- `database-migrations` → File migration (wajib, synchronize: false)
+- `backend-patterns`    → API design / response format
+- `api-design`          → Rancang endpoint baru
+- `redis-patterns`      → Cache / session
+
+### Frontend
+- `frontend-patterns`   → Next.js page / layout
+- `react-patterns`      → React component / hooks
+- `nextjs-turbopack`    → Next.js 16 config
+
+### Quality & Security
+- `security-review`     → JWT, KYC, payment flow
+- `security-scan`       → Cek celah sebelum deploy
+- `error-handling`      → Konsistensi error response
+- `tdd-workflow`        → Testing strategy
+- `verification-loop`   → Verifikasi hasil implementasi
+
+### DevOps
+- `docker-patterns`     → docker-compose / Dockerfile
+- `deployment-patterns` → Deploy ke VPS
+
+### Rules (selalu ikuti)
+- `common`      → naming, struktur, best practices
+- `typescript`  → TypeScript strict conventions
+- `react`       → React conventions
+- `web`         → Web standards & accessibility
+ 

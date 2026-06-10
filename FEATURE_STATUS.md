@@ -1,5 +1,5 @@
 # Mireng Feature Status
-*Last updated: Mei 2026*
+*Last updated: Juni 2026*
 
 ---
 
@@ -33,9 +33,10 @@
 | Order Basic | ✅ | checkout, list, detail |
 | Dashboard Seller UI | ✅ | stats, tabel, modal tambah/edit |
 | Profile Page UI | ✅ | 4 tab: profil, alamat, keamanan, akun |
-| Halaman Buka Toko | ✅ | multi-step form (4 langkah) |
 | Login Page Premium | ✅ | split layout, demo akun |
 | Navbar Premium | ✅ | search, cart badge, dropdown user |
+| Navbar Role-aware | ✅ | tampilan beda untuk buyer/seller/admin |
+| AuthInitializer Fix | ✅ | tidak loading forever |
 
 ---
 
@@ -44,76 +45,83 @@
 | Feature | Status | Notes |
 |---|---|---|
 | Checkout Flow | 🔶 | basic only, belum: alamat, ongkir, payment |
-| KYC System | 🔶 | field ada di DB, workflow belum |
-| Admin Foundation | 🔶 | role ada, panel belum |
-| Review Foundation | 🔶 | field rating ada, UI belum |
 | Cloudflare R2 | 🔶 | integrasi ada, belum stabil |
-| Store Verification | 🔶 | field ada, flow admin belum |
-| Progressive KYC | 🔶 | konsep disepakati, belum implemented |
+| Progressive KYC | 🔶 | fields ada di DB, workflow belum |
+| Admin Foundation | 🔶 | panel ada, fitur belum lengkap |
+| Review Foundation | 🔶 | field rating ada, UI belum |
 
 ---
 
-## Planned — FASE 1 (Database Migration v3)
+## ✅ FASE 1 — Database Migration v3 (SELESAI)
 
 | Feature | Status | Notes |
 |---|---|---|
-| seller_type di stores | 📋 | physical/digital |
-| store_type di stores | 📋 | personal/umkm/official |
-| seller_tier di stores | 📋 | regular/star/star_plus/top/official |
-| badge_visible | 📋 | seller bisa sembunyikan badge |
-| tier_progress | 📋 | angka progress tidak reset |
-| Tabel store_verifications | 📋 | dokumen verifikasi toko |
-| Tabel seller_applications | 📋 | permohonan saat pendaftaran ditutup |
-| Tabel platform_settings | 📋 | admin toggle buka/tutup |
-| categories.for_type | 📋 | pisah kategori fisik/digital |
-| Progressive KYC fields | 📋 | kyc_verified, withdraw_blocked |
+| seller_type di stores | ✅ | physical / digital |
+| store_type di stores | ✅ | personal / umkm / official |
+| seller_tier di stores | ✅ | regular / star / star_plus / top / official |
+| badge_visible | ✅ | seller bisa sembunyikan badge |
+| tier_progress | ✅ | angka progress tidak reset |
+| Tabel store_verifications | ✅ | dokumen verifikasi toko |
+| Tabel seller_applications | ✅ | permohonan saat pendaftaran ditutup |
+| Tabel platform_settings | ✅ | admin toggle buka/tutup |
+| categories.for_type | ✅ | pisah kategori fisik/digital |
+| Progressive KYC fields | ✅ | kyc_verified, withdraw_blocked di users |
+| Wallet KYC limit | ✅ | limit withdraw tanpa KYC |
+| seller_tier_log | ✅ | log riwayat perubahan tier |
 
 ---
 
-## Planned — FASE 2 (Backend API)
+## ✅ FASE 2 — Backend API (SELESAI)
 
 | Feature | Status | Notes |
 |---|---|---|
-| Seller Registration Flow | 📋 | buka/tutup, permohonan khusus |
-| Admin Toggle Pendaftaran | 📋 | buka/tutup via platform_settings |
-| Tier System Otomatis | 📋 | cron job cek target per seller |
-| Admin Override Tier | 📋 | manual naik/turun + notifikasi |
-| Progressive KYC Withdraw | 📋 | block withdraw jika belum KYC |
-| Store Verification API | 📋 | admin approve/reject |
-| Platform Settings API | 📋 | admin kelola setting global |
-| Seller Application API | 📋 | permohonan + review admin |
+| Platform Settings Module | ✅ | 19 default settings |
+| Store Verifications Module | ✅ | upload, approve, reject |
+| Seller Applications Module | ✅ | permohonan + review admin |
+| Tier System Module | ✅ | cron job otomatis + admin override |
+| Admin Toggle Pendaftaran | ✅ | buka/tutup via platform_settings |
+| Progressive KYC Withdraw | ✅ | block withdraw jika belum KYC |
+| Admin Override Tier | ✅ | manual naik/turun + notifikasi |
+| Total Endpoint Baru | ✅ | 16 endpoint |
 
 ---
 
-## Planned — FASE 3 (Frontend)
+## 🔶 FASE 3 — Frontend (PARTIAL)
 
 | Feature | Status | Notes |
 |---|---|---|
-| Form Buka Toko v2 | 📋 | pilih seller_type + store_type + dokumen |
-| Alamat Indonesia Otomatis | 📋 | wilayah.id API |
-| Admin Panel Verifikasi | 📋 | review dokumen, approve/reject |
-| Dashboard Tier Progress | 📋 | progress bar + notifikasi tier |
-| Halaman Toko Publik | 📋 | store page + produk + rating |
-| Seller Analytics | 📋 | statistik penjualan, konversi |
+| Form Buka Toko v2 | ✅ | 6 steps (tipe seller, tipe toko, info, lokasi, dokumen, review) |
+| Halaman Toko Publik `/stores/[slug]` | ✅ | banner, info, produk |
+| Dashboard Tier `/dashboard/tier` | ✅ | progress bar, notifikasi |
+| Admin Panel `/admin` | ✅ | dashboard statistik |
+| Admin Verifikasi Toko | ✅ | `/admin/verifications` |
+| Admin Seller Applications | ✅ | `/admin/seller-applications` |
+| Admin Platform Settings | ✅ | `/admin/settings` |
+| Middleware Proteksi `/admin/*` | ✅ | |
+| WilayahSelector | 📋 | Provinsi → Kota → Kecamatan → Kelurahan |
+| DocumentUpload Component | 📋 | upload dokumen verifikasi |
+| StoreCard Component | 📋 | kartu toko di listing |
+| Dashboard Seller v2 | 📋 | target per tier, analytics |
 | Kategori Terpisah UI | 📋 | fisik vs digital di frontend |
+| Seller Analytics | 📋 | statistik penjualan, konversi |
 
 ---
 
-## Planned — FASE 4 (Integrasi Eksternal)
+## 📋 FASE 4 — Integrasi Eksternal
 
 | Feature | Status | Notes |
 |---|---|---|
-| Raja Ongkir API | 📋 | cek ongkir otomatis, bisa ganti Biteship |
+| Raja Ongkir API | 📋 | cek ongkir otomatis |
 | Midtrans Payment | 📋 | VA, QRIS, e-wallet, CC, COD |
 | Escrow System | 📋 | tahan dana sampai buyer konfirmasi |
 | COD Support | 📋 | untuk produk fisik |
-| WebSocket/Socket.io | 📋 | infrastruktur realtime |
+| WebSocket / Socket.io | 📋 | infrastruktur realtime |
 | Chat Real-time | 📋 | buyer ↔ seller |
-| Email Notifikasi | 📋 | Nodemailer/Resend |
+| Email Notifikasi | 📋 | Nodemailer / Resend |
 
 ---
 
-## Planned — FASE 5 (Fitur Lanjutan)
+## 📋 FASE 5 — Fitur Lanjutan
 
 | Feature | Status | Notes |
 |---|---|---|
@@ -127,22 +135,22 @@
 | Refund & Mediasi | 📋 | negosiasi, admin mediasi |
 | Notifikasi In-app | 📋 | bell icon, real-time |
 | Notifikasi Email | 📋 | event penting |
-| Wallet Buyer | 📋 | saldo refund/cashback |
+| Wallet Buyer | 📋 | saldo refund / cashback |
 | Wallet Seller | 📋 | saldo penjualan, tarik dana |
 
 ---
 
-## Planned — FASE 6 (Deploy)
+## 📋 FASE 6 — Deploy & Production
 
 | Feature | Status | Notes |
 |---|---|---|
 | Docker Compose | 📋 | frontend + backend + postgres |
-| VPS Deploy Backend | 📋 | Railway/VPS Ubuntu |
+| VPS Deploy Backend | 📋 | Ubuntu VPS |
 | Vercel Frontend | 📋 | |
-| Domain + SSL | 📋 | |
+| Domain + SSL | 📋 | Nginx reverse proxy |
 | CI/CD GitHub Actions | 📋 | |
 | i18n Indonesia + Inggris | 📋 | dari awal |
-| Boost Produk Berbayar | 📋 | gratis dulu, nanti berbayar |
+| Monitoring | 📋 | Sentry / Uptime Robot |
 
 ---
 
@@ -156,7 +164,7 @@
 ✅ Seller bisa sembunyikan badge (progress tetap jalan)
 ✅ Admin bisa buka/tutup pendaftaran seller
 ✅ Saat ditutup: bisa ajukan permohonan khusus
-✅ Raja Ongkir (bisa ganti Biteship/ekspedisi sendiri nanti)
+✅ Raja Ongkir (bisa ganti Biteship nanti)
 ✅ Seller pilih ekspedisi yang diaktifkan/dinonaktifkan
 ✅ Komisi: Regular paling rendah, naik per tier
 ✅ COD tersedia untuk produk fisik

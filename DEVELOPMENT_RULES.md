@@ -1,4 +1,4 @@
-# Mireng Development Rules
+# Mireng Development Rules 
 
 # Core Philosophy
 
