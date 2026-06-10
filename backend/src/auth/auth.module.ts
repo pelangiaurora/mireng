@@ -9,11 +9,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     UsersModule,
     JwtModule.register({
-      secret: 'SECRET_KEY_MIRENG',
-      signOptions: { expiresIn: '1d' },
+      secret: process.env.JWT_SECRET || 'SECRET_KEY_MIRENG',
+      signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN || '1d') as any },
     }),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

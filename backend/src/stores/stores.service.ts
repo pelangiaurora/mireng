@@ -26,7 +26,19 @@ export class StoresService {
     const slugExists = await this.storeRepo.findOne({ where: { slug } });
     if (slugExists) throw new ConflictException('Nama toko sudah digunakan');
 
-    const store = this.storeRepo.create({ ...dto, sellerId, slug });
+    const store = this.storeRepo.create({
+      ...dto,
+      sellerId,
+      slug,
+      sellerType: dto.sellerType ?? 'digital',
+      storeType: dto.storeType ?? 'personal',
+      sellerTier: 'regular',
+      verifStatus: 'unverified',
+      badgeVisible: true,
+      tierProgress: 0,
+      totalTransactions: 0,
+      activeSince: new Date(),
+    });
     return this.storeRepo.save(store);
   }
 

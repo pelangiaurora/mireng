@@ -1,7 +1,7 @@
 import {
   IsString,
   IsOptional,
-  IsBoolean,
+  IsIn,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -13,6 +13,14 @@ export class CreateStoreDto {
   @MinLength(3)
   @MaxLength(100)
   name: string;
+
+  @ApiProperty({ example: 'physical', enum: ['physical', 'digital'] })
+  @IsIn(['physical', 'digital'])
+  sellerType: string;
+
+  @ApiProperty({ example: 'personal', enum: ['personal', 'umkm', 'official'] })
+  @IsIn(['personal', 'umkm', 'official'])
+  storeType: string;
 
   @ApiPropertyOptional({ example: 'Toko kami menjual berbagai produk...' })
   @IsOptional()
