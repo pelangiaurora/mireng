@@ -82,11 +82,11 @@ function UserDropdown({ onClose }: { onClose: () => void }) {
         {user?.role === 'seller' && (
           <>
             <div className="mx-4 my-1.5 border-t border-gray-100" />
-            <Link href="/dashboard" onClick={onClose}
+           <Link href="/dashboard" onClick={onClose}
               className="flex items-center gap-3 px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors font-medium">
-              <LayoutDashboard size={15} /> Dashboard Seller
+              <LayoutDashboard size={15} /> Dashboard
             </Link>
-            <Link href="/dashboard/tier" onClick={onClose}
+            <Link href="/seller/tier" onClick={onClose}
               className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-50 transition-colors font-medium">
               <Star size={15} /> Tier & Progress
             </Link>
@@ -166,8 +166,8 @@ export default function Navbar() {
     { label: 'File Digital', href: '/?type=file' },
     { label: 'Lisensi', href: '/?type=license' },
     ...(user?.role === 'seller' ? [
-      { label: '⚡ Dashboard', href: '/dashboard' },
-      { label: '⭐ Tier Saya', href: '/dashboard/tier' },
+      { label: '⚡ Seller Centre', href: '/seller' },
+      { label: '⭐ Tier Saya', href: '/seller/tier' },
     ] : []),
     ...(user?.role === 'admin' ? [
       { label: '⚡ Dashboard', href: '/dashboard' },
@@ -181,10 +181,10 @@ export default function Navbar() {
     { icon: <ShoppingCart size={16} />, label: `Keranjang${cartCount > 0 ? ` (${cartCount})` : ''}`, href: '/cart' },
     { icon: <Package size={16} />, label: 'Pesanan', href: '/orders' },
     ...(user?.role === 'seller' || user?.role === 'admin' ? [
-      { icon: <LayoutDashboard size={16} />, label: 'Dashboard', href: '/dashboard' },
+      { icon: <LayoutDashboard size={16} />, label: 'Dashboard', href: '/seller' },
     ] : []),
     ...(user?.role === 'seller' ? [
-      { icon: <Star size={16} />, label: 'Tier & Progress', href: '/dashboard/tier' },
+      { icon: <Star size={16} />, label: 'Tier & Progress', href: '/seller/tier' },
     ] : []),
     ...(user?.role === 'admin' ? [
       { icon: <Shield size={16} />, label: 'Admin Panel', href: '/admin' },

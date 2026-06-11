@@ -126,7 +126,7 @@ export default function TierDashboardPage() {
         <div className="text-center space-y-3">
           <AlertTriangle size={40} className="text-gray-300 mx-auto" />
           <p className="text-gray-500">Gagal memuat info tier</p>
-          <Link href="/dashboard/products" className="text-sm text-gray-900 underline">Ke Dashboard</Link>
+          <Link href="/seller/products" className="text-sm text-gray-900 underline">Ke Seller Centre</Link>
         </div>
       </div>
     );
@@ -140,7 +140,7 @@ export default function TierDashboardPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/dashboard/products" className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
+          <Link href="/seller/products" className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
             <ArrowLeft size={20} className="text-gray-500" />
           </Link>
           <div>

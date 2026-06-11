@@ -3,24 +3,32 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isSellerRoute = pathname.startsWith("/seller");
 
-  // Proteksi semua route /admin/*
-  if (pathname.startsWith("/admin")) {
+  if (isAdminRoute || isSellerRoute) {
     const token = request.cookies.get("token")?.value;
 
-    // Tidak ada token → redirect ke login
     if (!token) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // Decode JWT untuk cek role (tanpa library tambahan)
     try {
       const payload = JSON.parse(
         Buffer.from(token.split(".")[1], "base64").toString(),
       );
-      if (payload.role !== "admin") {
+
+      if (isAdminRoute && payload.role !== "admin") {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
+      if (
+        isSellerRoute &&
+        payload.role !== "seller" &&
+        payload.role !== "admin"
+      ) {
         return NextResponse.redirect(new URL("/", request.url));
       }
     } catch {
@@ -32,5 +40,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/seller/:path*"],
 };
