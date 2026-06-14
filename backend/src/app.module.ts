@@ -17,6 +17,8 @@ import { PlatformSettingsModule } from './platform-settings/platform-settings.mo
 import { StoreVerificationsModule } from './store-verifications/store-verifications.module';
 import { SellerApplicationsModule } from './seller-applications/seller-applications.module';
 import { TierSystemModule } from './tier-system/tier-system.module';
+import { ShippingModule } from './shipping/shipping.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -50,6 +52,8 @@ import { TierSystemModule } from './tier-system/tier-system.module';
     StoreVerificationsModule,
     SellerApplicationsModule,
     TierSystemModule,
+    ShippingModule,
+    AdminModule,
   ],
   providers: [R2Service],
 })
