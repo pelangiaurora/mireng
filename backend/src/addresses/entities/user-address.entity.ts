@@ -1,6 +1,11 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn,
-  ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
@@ -48,6 +53,9 @@ export class UserAddress {
 
   @Column({ name: 'is_default', default: false })
   isDefault: boolean;
+
+  @Column({ name: 'rajaongkir_destination_id', nullable: true, length: 20 })
+  rajaongkirDestinationId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

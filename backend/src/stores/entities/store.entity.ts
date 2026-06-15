@@ -173,6 +173,10 @@ export class Store {
   })
   activeSince: Date;
 
+  // ─── FASE 4: Raja Ongkir ──────────────────────────────────────────
+  @Column({ name: 'rajaongkir_destination_id', nullable: true, length: 20 })
+  rajaongkirDestinationId: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
