@@ -18,6 +18,7 @@ import { StoreVerificationsModule } from './store-verifications/store-verificati
 import { SellerApplicationsModule } from './seller-applications/seller-applications.module';
 import { TierSystemModule } from './tier-system/tier-system.module';
 import { ShippingModule } from './shipping/shipping.module';
+import { PaymentsModule } from './payments/payments.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
@@ -53,6 +54,7 @@ import { AdminModule } from './admin/admin.module';
     SellerApplicationsModule,
     TierSystemModule,
     ShippingModule,
+    PaymentsModule,
     AdminModule,
   ],
   providers: [R2Service],
