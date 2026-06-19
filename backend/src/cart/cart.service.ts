@@ -8,107 +8,107 @@ import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class CartService {
-    constructor(
-        @InjectRepository(Cart)
-        private cartRepo: Repository<Cart>,
+  constructor(
+    @InjectRepository(Cart)
+    private cartRepo: Repository<Cart>,
 
-        @InjectRepository(CartItem)
-        private cartItemRepo: Repository<CartItem>,
+    @InjectRepository(CartItem)
+    private cartItemRepo: Repository<CartItem>,
 
-        @InjectRepository(Product)
-        private productRepo: Repository<Product>,
-    ) { }
+    @InjectRepository(Product)
+    private productRepo: Repository<Product>,
+  ) {}
 
-    async addToCart(userId, productId, quantity) {
-        // cari product
-        const product = await this.productRepo.findOne({
-            where: { id: productId },
-        });
+  async addToCart(userId, productId, quantity) {
+    // cari product
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
+    });
 
-        if (!product) {
-            return {
-                message: 'Product not found',
-            };
-        }
-
-        // cari cart user
-        let cart = await this.cartRepo.findOne({
-            where: {
-                user: {
-                    id: userId,
-                },
-            },
-            relations: ['user'],
-        });
-
-        // kalau belum ada cart
-        if (!cart) {
-            cart = this.cartRepo.create({
-                user: {
-                    id: userId,
-                } as any,
-            });
-
-            cart = await this.cartRepo.save(cart);
-        }
-
-        // buat item
-        const item = this.cartItemRepo.create({
-            cart,
-            product,
-            quantity,
-        });
-
-        return this.cartItemRepo.save(item);
+    if (!product) {
+      return {
+        message: 'Product not found',
+      };
     }
 
-    async getMyCart(userId: string) {
-        const cart = await this.cartRepo.findOne({
-            where: {
-                user: {
-                    id: userId,
-                },
-            },
-            relations: ['items', 'items.product'],
-        });
+    // cari cart user
+    let cart = await this.cartRepo.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['user'],
+    });
 
-        if (!cart) {
-            return {
-                items: [],
-                total: 0,
-            };
-        }
+    // kalau belum ada cart
+    if (!cart) {
+      cart = this.cartRepo.create({
+        user: {
+          id: userId,
+        } as any,
+      });
 
-        let total = 0;
-
-        cart.items.forEach((item) => {
-            total += Number(item.product.price) * item.quantity;
-        });
-
-        return {
-            cartId: cart.id,
-            items: cart.items,
-            total,
-        };
+      cart = await this.cartRepo.save(cart);
     }
 
-    async removeItem(itemId: string) {
-        const item = await this.cartItemRepo.findOne({
-            where: {
-                id: itemId,
-            },
-        });
+    // buat item
+    const item = this.cartItemRepo.create({
+      cart,
+      product,
+      quantity,
+    });
 
-        if (!item) {
-            return {
-                message: 'Item not found',
-            };
-        }
+    return this.cartItemRepo.save(item);
+  }
 
-        await this.cartItemRepo.remove(item);
+  async getMyCart(userId: string) {
+    const cart = await this.cartRepo.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['items', 'items.product', 'items.product.store'],
+    });
 
-        return {
-            message: 'Item removed from cart',
-        };
+    if (!cart) {
+      return {
+        items: [],
+        total: 0,
+      };
     }
+
+    let total = 0;
+
+    cart.items.forEach((item) => {
+      total += Number(item.product.price) * item.quantity;
+    });
+
+    return {
+      cartId: cart.id,
+      items: cart.items,
+      total,
+    };
+  }
+
+  async removeItem(itemId: string) {
+    const item = await this.cartItemRepo.findOne({
+      where: {
+        id: itemId,
+      },
+    });
+
+    if (!item) {
+      return {
+        message: 'Item not found',
+      };
+    }
+
+    await this.cartItemRepo.remove(item);
+
+    return {
+      message: 'Item removed from cart',
+    };
+  }
 }

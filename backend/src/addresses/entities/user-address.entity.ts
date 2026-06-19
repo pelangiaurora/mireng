@@ -42,6 +42,9 @@ export class UserAddress {
   @Column({ nullable: true })
   district: string;
 
+  @Column({ nullable: true })
+  village: string;
+
   @Column({ name: 'postal_code' })
   postalCode: string;
 

@@ -12,9 +12,14 @@ import { Cart } from '../cart/entities/cart.entity';
 import { CartItem } from '../cart/entities/cart-item.entity';
 import { UserAddress } from '../addresses/entities/user-address.entity';
 import { CheckoutDto } from './dto/checkout.dto';
+import { Payment } from './entities/payment.entity';
+import { ConfigService } from '@nestjs/config';
+import * as midtransClient from 'midtrans-client';
 
 @Injectable()
 export class OrdersService {
+  private snap: any;
+
   constructor(
     @InjectRepository(Order)
     private orderRepo: Repository<Order>,
@@ -22,13 +27,22 @@ export class OrdersService {
     private orderItemRepo: Repository<OrderItem>,
     @InjectRepository(OrderStore)
     private orderStoreRepo: Repository<OrderStore>,
+    @InjectRepository(Payment)
+    private paymentRepo: Repository<Payment>,
     @InjectRepository(Cart)
     private cartRepo: Repository<Cart>,
     @InjectRepository(CartItem)
     private cartItemRepo: Repository<CartItem>,
     @InjectRepository(UserAddress)
     private addressRepo: Repository<UserAddress>,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.snap = new midtransClient.Snap({
+      isProduction: this.configService.get('MIDTRANS_IS_PRODUCTION') === 'true',
+      serverKey: this.configService.get('MIDTRANS_SERVER_KEY'),
+      clientKey: this.configService.get('MIDTRANS_CLIENT_KEY'),
+    });
+  }
 
   // ─── Checkout Baru (multi-toko + alamat + ongkir) ─────────────────
   async checkout(userId: string, dto: CheckoutDto) {
@@ -148,6 +162,78 @@ export class OrdersService {
       status: 'pending',
       paymentMethod: dto.paymentMethod,
     };
+
+    // 11. Langsung buat transaksi Midtrans (seperti Shopee/Blibli — 1 flow)
+    try {
+      const midtransOrderId = `MIRENG-${savedOrder.id}-${Date.now()}`;
+
+      const itemDetails = cart!.items.map((item) => ({
+        id: item.product.id,
+        price: Math.round(Number(item.product.price)),
+        quantity: item.quantity,
+        name: item.product.name.substring(0, 50),
+      }));
+
+      if (shippingTotal > 0) {
+        itemDetails.push({
+          id: 'SHIPPING',
+          price: Math.round(shippingTotal),
+          quantity: 1,
+          name: 'Ongkos Kirim',
+        });
+      }
+
+      const transaction = await this.snap.createTransaction({
+        transaction_details: {
+          order_id: midtransOrderId,
+          gross_amount: Math.round(total),
+        },
+        item_details: itemDetails,
+        customer_details: {
+          first_name: shippingAddress['recipientName'] ?? 'Pembeli',
+          phone: shippingAddress['phone'] ?? '',
+        },
+        credit_card: { secure: true },
+      });
+
+      // Simpan payment record
+      await this.paymentRepo.save(
+        this.paymentRepo.create({
+          orderId: savedOrder.id,
+          method: dto.paymentMethod,
+          externalId: midtransOrderId,
+          status: 'pending',
+          amount: Math.round(total),
+          paymentUrl: transaction.redirect_url,
+        }),
+      );
+
+      return {
+        orderId: savedOrder.id,
+        subtotal,
+        shippingTotal,
+        total,
+        status: 'pending',
+        paymentMethod: dto.paymentMethod,
+        // ← Shopee/Blibli style: langsung dapat token & URL bayar
+        snapToken: transaction.token,
+        paymentUrl: transaction.redirect_url,
+      };
+    } catch {
+      // Kalau Midtrans gagal, order tetap tersimpan — buyer bisa retry bayar
+      return {
+        orderId: savedOrder.id,
+        subtotal,
+        shippingTotal,
+        total,
+        status: 'pending',
+        paymentMethod: dto.paymentMethod,
+        snapToken: null,
+        paymentUrl: null,
+        paymentError:
+          'Gagal membuat transaksi pembayaran, silakan coba bayar ulang dari halaman pesanan.',
+      };
+    }
   }
 
   // ─── Get My Orders ─────────────────────────────────────────────────

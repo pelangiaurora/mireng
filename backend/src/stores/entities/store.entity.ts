@@ -45,6 +45,9 @@ export class Store {
   @Column({ nullable: true })
   district: string;
 
+  @Column({ nullable: true })
+  village: string;
+
   @Column({ nullable: true, type: 'text' })
   address: string;
 
@@ -176,6 +179,13 @@ export class Store {
   // ─── FASE 4: Raja Ongkir ──────────────────────────────────────────
   @Column({ name: 'rajaongkir_destination_id', nullable: true, length: 20 })
   rajaongkirDestinationId: string;
+
+  @Column({
+    name: 'active_couriers',
+    type: 'jsonb',
+    default: ['jne', 'jnt', 'pos', 'anteraja'],
+  })
+  activeCouriers: string[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

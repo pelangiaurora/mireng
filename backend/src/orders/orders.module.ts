@@ -10,9 +10,11 @@ import { Cart } from '../cart/entities/cart.entity';
 import { CartItem } from '../cart/entities/cart-item.entity';
 import { Store } from '../stores/entities/store.entity';
 import { UserAddress } from '../addresses/entities/user-address.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([
       Order,
       OrderItem,
