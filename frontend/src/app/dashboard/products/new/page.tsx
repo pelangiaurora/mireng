@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
@@ -225,10 +225,13 @@ export default function NewProductPage() {
         }
     };
 
-    if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
-        router.push('/');
-        return null;
-    }
+    // Auth check — gunakan useEffect, bukan render langsung
+    useEffect(() => {
+        if (!user) { router.push('/login'); return; }
+        if (user.role !== 'seller' && user.role !== 'admin') { router.push('/'); }
+    }, [user, router]);
+
+    if (!user || (user.role !== 'seller' && user.role !== 'admin')) return null;
 
     return (
         <div className="page-container py-6 sm:py-8">
