@@ -19,54 +19,31 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import {
-  ApiTags,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
-import { FileInterceptor }
-  from '@nestjs/platform-express';
-import { diskStorage }
-  from 'multer';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { FilesInterceptor }
-  from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-
 
 @ApiTags('Products')
 @ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
-  constructor(
-    private readonly productsService: ProductsService,
-  ) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   // UPLOAD PRODUCT IMAGE
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads',
 
-        filename: (
-          req,
-          file,
-          callback,
-        ) => {
-          const uniqueName =
-            Date.now() +
-            '-' +
-            Math.round(Math.random() * 1e9);
+        filename: (req, file, callback) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
 
-          callback(
-            null,
-            uniqueName +
-            extname(file.originalname),
-          );
+          callback(null, uniqueName + extname(file.originalname));
         },
       }),
 
@@ -74,69 +51,10 @@ export class ProductsController {
         fileSize: 5 * 1024 * 1024,
       },
 
-      fileFilter: (
-        req,
-        file,
-        callback,
-      ) => {
-        const allowedExtensions =
-          /\.(jpg|jpeg|png)$/i;
+      fileFilter: (req, file, callback) => {
+        const allowedExtensions = /\.(jpg|jpeg|png)$/i;
 
-        if (
-          !allowedExtensions.test(
-            file.originalname,
-          )
-        ) {
-          return callback(
-            new BadRequestException(
-              'Only JPG, JPEG, and PNG files are allowed',
-            ),
-            false,
-          );
-        }
-
-        callback(null, true);
-      },
-    })
-  )
-  uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return {
-      success: true,
-
-      imageUrl:
-        '/uploads/' + file.filename,
-    };
-  }
-
-  // UPLOAD MULTIPLE PRODUCT IMAGES
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
-  @Post('upload-multiple')
-  @UseInterceptors(
-    FilesInterceptor('files', 10, {
-      storage: memoryStorage(),
-
-      limits: {
-        fileSize: 5 * 1024 * 1024,
-      },
-
-      fileFilter: (
-        req,
-        file,
-        callback,
-      ) => {
-        const allowedExtensions =
-          /\.(jpg|jpeg|png)$/i;
-
-        if (
-          !allowedExtensions.test(
-            file.originalname,
-          )
-        ) {
+        if (!allowedExtensions.test(file.originalname)) {
           return callback(
             new BadRequestException(
               'Only JPG, JPEG, and PNG files are allowed',
@@ -149,44 +67,61 @@ export class ProductsController {
       },
     }),
   )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return {
+      success: true,
 
+      imageUrl: '/uploads/' + file.filename,
+    };
+  }
+
+  // UPLOAD MULTIPLE PRODUCT IMAGES
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
+  @Post('upload-multiple')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: memoryStorage(),
+
+      limits: {
+        fileSize: 5 * 1024 * 1024,
+      },
+
+      fileFilter: (req, file, callback) => {
+        const allowedExtensions = /\.(jpg|jpeg|png)$/i;
+
+        if (!allowedExtensions.test(file.originalname)) {
+          return callback(
+            new BadRequestException(
+              'Only JPG, JPEG, and PNG files are allowed',
+            ),
+            false,
+          );
+        }
+
+        callback(null, true);
+      },
+    }),
+  )
   uploadMultipleFiles(
     @UploadedFiles()
     files: Express.Multer.File[],
   ) {
     return {
-      imageUrls: files.map(
-        (file) =>
-          '/uploads/' + file.filename,
-      ),
+      imageUrls: files.map((file) => '/uploads/' + file.filename),
     };
   }
 
   // UPLOAD IMAGES DIRECTLY TO PRODUCT GALLERY
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
   @Post(':id/images/upload')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
         destination: './uploads',
-        filename: (
-          req,
-          file,
-          callback,
-        ) => {
-          const uniqueName =
-            Date.now() +
-            '-' +
-            Math.round(Math.random() * 1e9);
+        filename: (req, file, callback) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
 
-          callback(
-            null,
-            uniqueName +
-            extname(file.originalname),
-          );
+          callback(null, uniqueName + extname(file.originalname));
         },
       }),
 
@@ -194,19 +129,10 @@ export class ProductsController {
         fileSize: 5 * 1024 * 1024,
       },
 
-      fileFilter: (
-        req,
-        file,
-        callback,
-      ) => {
-        const allowedExtensions =
-          /\.(jpg|jpeg|png)$/i;
+      fileFilter: (req, file, callback) => {
+        const allowedExtensions = /\.(jpg|jpeg|png)$/i;
 
-        if (
-          !allowedExtensions.test(
-            file.originalname,
-          )
-        ) {
+        if (!allowedExtensions.test(file.originalname)) {
           return callback(
             new BadRequestException(
               'Only JPG, JPEG, and PNG files are allowed',
@@ -225,46 +151,38 @@ export class ProductsController {
     files: Express.Multer.File[],
     @Request() req,
   ) {
-    return this.productsService
-      .uploadImagesToProduct(
-        id,
-        files,
-        req.user.userId,
-      );
-  }
-
-  // CREATE PRODUCT
-  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
-
-  @Post()
-  create(
-    @Request() req,
-    @Body() body: CreateProductDto
-  ) {
-    return this.productsService.create(
-      body,
+    return this.productsService.uploadImagesToProduct(
+      id,
+      files,
       req.user.userId,
     );
   }
 
-  // GET ALL PRODUCTS
-  @Get()
-  findAll(
-    @Query() query: any,
-  ) {
-    return this.productsService.findAll(
-      query,
-    );
+  // CREATE PRODUCT
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
+  @Post()
+  create(@Request() req, @Body() body: CreateProductDto) {
+    return this.productsService.create(body, req.user.userId);
   }
 
-  // GET PRODUCT DETAIL
+  // GET ALL PRODUCTS
+  @Get()
+  findAll(@Query() query: any) {
+    return this.productsService.findAll(query);
+  }
+
+  // GET PRODUCT DETAIL — support UUID dan slug
   @Get(':id')
-  findOne(
-    @Param('id') id: string,
-  ) {
-    return this.productsService.findOne(
-      id,
-    );
+  findOne(@Param('id') id: string) {
+    // Deteksi UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+    const isUuid =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        id,
+      );
+    if (isUuid) {
+      return this.productsService.findOne(id);
+    }
+    return this.productsService.findBySlug(id);
   }
 
   // UPDATE PRODUCT
@@ -273,58 +191,27 @@ export class ProductsController {
   update(
     @Request() req,
     @Param('id') id: string,
-    @Body() body: UpdateProductDto
+    @Body() body: UpdateProductDto,
   ) {
-    return this.productsService.update(
-      id,
-      body,
-      req.user.userId,
-    );
+    return this.productsService.update(id, body, req.user.userId);
   }
 
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
   @Patch('images/:imageId/set-thumbnail')
-  setThumbnail(
-    @Param('imageId') imageId: string,
-    @Request() req,
-  ) {
-    return this.productsService.setThumbnail(
-      imageId,
-      req.user.userId,
-    );
+  setThumbnail(@Param('imageId') imageId: string, @Request() req) {
+    return this.productsService.setThumbnail(imageId, req.user.userId);
   }
 
   // DELETE PRODUCT IMAGE
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
   @Delete('images/:imageId')
-  deleteImage(
-    @Param('imageId') imageId: string,
-    @Request() req,
-  ) {
-    return this.productsService.deleteImage(
-      imageId,
-      req.user.userId,
-    );
+  deleteImage(@Param('imageId') imageId: string, @Request() req) {
+    return this.productsService.deleteImage(imageId, req.user.userId);
   }
 
-  @UseGuards(
-    JwtAuthGuard,
-    new RolesGuard(['seller']),
-  )
+  @UseGuards(JwtAuthGuard, new RolesGuard(['seller']))
   @Delete(':id')
-  deleteProduct(
-    @Param('id') id: string,
-    @Request() req,
-  ) {
-    return this.productsService.deleteProduct(
-      id,
-      req.user.userId,
-    );
+  deleteProduct(@Param('id') id: string, @Request() req) {
+    return this.productsService.deleteProduct(id, req.user.userId);
   }
 }
